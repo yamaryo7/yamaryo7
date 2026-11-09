@@ -1,8 +1,12 @@
 name: 馬券帳 インストーラ作成
 
-# Actions タブから手動で実行する。できたインストーラは実行結果の Artifacts からダウンロードする。
+# 作業ブランチへのpushで自動実行（mainに入った後は Actions タブから手動でも実行できる）。
+# できたインストーラは実行結果の Artifacts からダウンロードする。
 on:
   workflow_dispatch:
+  push:
+    branches: ['claude/bakuento-implementation-s5szlt']
+    paths: ['bakencho/**', '.github/workflows/bakencho-installers.yml']
 
 jobs:
   build:
