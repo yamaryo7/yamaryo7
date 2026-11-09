@@ -1,0 +1,46 @@
+name: 馬券帳 インストーラ作成
+
+# Actions タブから手動で実行する。できたインストーラは実行結果の Artifacts からダウンロードする。
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+            args: ''
+          - os: macos-latest
+            name: macos-universal
+            args: '--target universal-apple-darwin'
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: bakencho
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: bakencho/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.name == 'macos-universal' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bakencho/src-tauri
+      - run: npm ci
+      - run: npm test
+      - run: npx tauri build ${{ matrix.args }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bakencho-${{ matrix.name }}
+          path: |
+            bakencho/src-tauri/target/release/bundle/msi/*.msi
+            bakencho/src-tauri/target/release/bundle/nsis/*.exe
+            bakencho/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          if-no-files-found: error

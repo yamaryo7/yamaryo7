@@ -1,0 +1,24 @@
+name: 馬券帳 テスト
+
+on:
+  push:
+    paths: ['bakencho/**', '.github/workflows/bakencho-*.yml']
+  pull_request:
+    paths: ['bakencho/**']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bakencho
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: bakencho/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
