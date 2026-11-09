@@ -26,7 +26,9 @@
   },
   "plugins": {
     "sql": {
-      "preload": ["sqlite:bakencho.db"]
+      "preload": [
+        "sqlite:bakencho.db"
+      ]
     }
   },
   "bundle": {
@@ -42,7 +44,17 @@
       "icons/icon.ico"
     ],
     "windows": {
-      "webviewInstallMode": { "type": "downloadBootstrapper" }
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      },
+      "wix": {
+        "language": "ja-JP"
+      },
+      "nsis": {
+        "languages": [
+          "Japanese"
+        ]
+      }
     }
   }
 }
